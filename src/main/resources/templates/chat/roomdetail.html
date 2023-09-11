@@ -140,6 +140,10 @@
         };
         ws.send("/pub/chat/message", {}, JSON.stringify(chatMessageDTO));
         messageInput.value = '';
+        document.body.scrollTop = document.body.scrollHeight;
+        document.documentElement.scrollTop = document.documentElement.scrollHeight;
+        console.log(document.body.scrollTop);
+        console.log(document.body.scrollHeight);
     }
 
     function recvMessage(recv) {
@@ -171,6 +175,7 @@
 
         // Append the constructed chat container to the message list
         messageList.appendChild(listItem);
+        messageList.scrollTop = messageList.scrollHeight;
     }
 
     $(document).ready(function () {
