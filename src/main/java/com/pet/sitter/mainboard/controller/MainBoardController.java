@@ -1,8 +1,5 @@
 package com.pet.sitter.mainboard.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pet.sitter.common.entity.Petsitter;
 import com.pet.sitter.mainboard.dto.PetSitterDTO;
 import com.pet.sitter.mainboard.service.MainBoardService;
 import com.pet.sitter.mainboard.validation.WriteForm;
@@ -13,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,9 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequestMapping("/mainboard")
 @Controller
@@ -37,7 +31,6 @@ public class MainBoardController {
 
     @Autowired
     public MainBoardService mainBoardService;
-
 
     @Autowired
     public MemberService memberService;
@@ -101,9 +94,7 @@ public class MainBoardController {
         String petCategory = (String) map.get("petCategory");
         String address = (String) map.get("sitterAddress");
         String sitterAddress = address.substring(0,2);
-        String sitterNoValue = (String)map.get("sitterNoValue");
-        Long sitterNo = Long.parseLong(sitterNoValue);
-        Page<PetSitterDTO> petSitterDTOList = mainBoardService.recommendList(category, petCategory, sitterAddress, sitterNo);
+        Page<PetSitterDTO> petSitterDTOList = mainBoardService.recommendList(category, petCategory, sitterAddress);
         return petSitterDTOList;
     }
 

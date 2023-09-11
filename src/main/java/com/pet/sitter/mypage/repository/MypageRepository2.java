@@ -28,4 +28,3 @@ public interface MypageRepository2 extends JpaRepository<Petsitter,Long> {
 
 
 }
-

@@ -15,6 +15,7 @@ import com.pet.sitter.mainboard.repository.WeekRepository;
 import com.pet.sitter.mainboard.validation.WriteForm;
 import com.pet.sitter.member.dto.MemberDTO;
 import com.pet.sitter.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +61,7 @@ public class MainBoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("petViewCnt"));
         sorts.add(Sort.Order.desc("petRegdate"));
-        Pageable pageable = PageRequest.of(page, 12, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         Page<Petsitter> petsitterPage = petsitterRepository.findAll(pageable);
 
         Page<PetSitterDTO> petSitterDTOPage = petsitterPage.map(petsitter -> {
@@ -86,7 +89,7 @@ public class MainBoardService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("petViewCnt"));
         sorts.add(Sort.Order.desc("petRegdate"));
-        Pageable pageable = PageRequest.of(page, 12, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
         Page<Petsitter> petsitterPage = petsitterRepository.findAllByPetAddressContaining(pageable, memberAddress);
         System.out.println(petsitterPage.getTotalPages());
         Page<PetSitterDTO> petSitterDTOPage = petsitterPage.map(petsitter -> {
@@ -217,11 +220,11 @@ public class MainBoardService {
     }
 
     //recommend
-    public Page<PetSitterDTO> recommendList(String category, String petCategory, String sitterAddress, Long sitterNo) {
+    public Page<PetSitterDTO> recommendList(String category, String petCategory, String sitterAddress) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("petRegdate"));
         Pageable pageable = PageRequest.of(0, 4, Sort.by(sorts));
-        Page<Petsitter> petsitterPage = petsitterRepository.findAll(PetsitterSpec.recommendWith(category, petCategory, sitterAddress, sitterNo), pageable);
+        Page<Petsitter> petsitterPage = petsitterRepository.findAll(PetsitterSpec.recommendWith(category, petCategory, sitterAddress), pageable);
         Page<PetSitterDTO> petSitterDTOPage = petsitterPage.map(petsitter -> {
             PetSitterDTO petSitterDTO = PetSitterDTO.builder().petsitter(petsitter).build();
             List<PetSitterFileDTO> petSitterFileDTOList = petsitter.getPetsitterFileList().stream()
@@ -242,9 +245,8 @@ public class MainBoardService {
     }
 
 
-
-    //************************************************혜지시작
-    //글작성
+    //혜지시작
+    //AreaSearch 테이블에 먼저 insert
     public void write(PetSitterDTO petSitterDTO, String id, MultipartFile[] boardFile) throws IOException {
         logger.info("MainBoardService-write()진입");
 
@@ -463,7 +465,7 @@ public class MainBoardService {
         List<Sort.Order> sorts = new ArrayList<>();
 
         sorts.add(Sort.Order.desc("petRegdate"));
-        Pageable pageable = PageRequest.of(page, 12, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
 
         Page<Petsitter> titleSearchPage  = petsitterRepository.findByPetTitleContaining(pageable,keyword);
         Page<PetSitterDTO> petSitterDTOPage = titleSearchPage.map(petsitter -> {
