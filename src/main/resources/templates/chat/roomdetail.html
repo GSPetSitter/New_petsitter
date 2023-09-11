@@ -20,11 +20,8 @@
     <div class="list-group" id="messageList">
         <!-- Messages will be appended here using JavaScript -->
     </div>
-    <footer class="input-group">
-        <div class="input-group-prepend">
-            <label class="input-group-text">내용</label>
-        </div>
-        <input type="text" id="messageInput" class="form-control">
+    <footer class="input-group" style="position: sticky; bottom: 25px">
+        <label for="messageInput"></label><input type="text" id="messageInput" class="form-control">
         <div class="input-group-append">
             <!-- 수정: 클릭 이벤트 핸들러 추가 -->
             <button class="btn btn-primary orange-btn" type="button" onclick="sendMessage()">보내기</button>
@@ -50,6 +47,7 @@
         </div>
     </footer>
 </div>
+<div id="roomId" th:data-room-id="${roomId}"></div>
 <div id="roomUUID" th:data-uuid="${roomUUID}"></div>
 <div id="hostId" th:data-host-id="${hostId}"></div>
 <div id="guestId" th:data-guest-id="${guestId}"></div>
@@ -62,7 +60,7 @@
     var ws = Stomp.over(sock);
     var reconnect = 0;
 
-    var roomId = localStorage.getItem('sitter.roomId');
+    var roomId = document.getElementById('roomId').getAttribute('data-room-id');
     var roomUUID = document.getElementById('roomUUID').getAttribute('data-uuid');
     var hostId = document.getElementById('hostId').getAttribute('data-host-id');
     var guestId = document.getElementById('guestId').getAttribute('data-guest-id');
@@ -142,8 +140,6 @@
         messageInput.value = '';
         document.body.scrollTop = document.body.scrollHeight;
         document.documentElement.scrollTop = document.documentElement.scrollHeight;
-        console.log(document.body.scrollTop);
-        console.log(document.body.scrollHeight);
     }
 
     function recvMessage(recv) {
@@ -175,7 +171,8 @@
 
         // Append the constructed chat container to the message list
         messageList.appendChild(listItem);
-        messageList.scrollTop = messageList.scrollHeight;
+        document.body.scrollTop = document.body.scrollHeight;
+        document.documentElement.scrollTop = document.documentElement.scrollHeight;
     }
 
     $(document).ready(function () {
@@ -193,6 +190,9 @@
             success: function (response) {
                 alert("매칭이 성공 되었습니다.");
                 location.reload();
+
+                document.body.scrollTop = document.body.scrollHeight;
+                document.documentElement.scrollTop = document.documentElement.scrollHeight;
             },
             error: function (request, status, error) {
                 alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
@@ -209,6 +209,9 @@
             success: function (response) {
                 alert("매칭이 취소 되었습니다.");
                 location.reload();
+
+                document.body.scrollTop = document.body.scrollHeight;
+                document.documentElement.scrollTop = document.documentElement.scrollHeight;
             },
             error: function (request, status, error) {
                 alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);

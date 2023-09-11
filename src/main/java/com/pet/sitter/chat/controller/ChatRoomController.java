@@ -60,6 +60,7 @@ public class ChatRoomController {
     @GetMapping("/room/enter/{roomUUID}")
     public String roomDetail(Model model, @PathVariable String roomUUID) {
         ChatRoom chatRoom = chatRoomService.getChatRoomByRoomUUID(roomUUID);
+        System.out.println("rOOmUUID: " + roomUUID);
         Long roomId = chatRoomService.getChatRoomByRoomUUID(roomUUID).getId();
         Matching matching = chatRoomService.getMatchingByRoomId(roomId);
 

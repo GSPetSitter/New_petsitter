@@ -84,3 +84,12 @@ a {
     background-color: #f77737;
     border-color: #f77737;
 }
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent; /* 스크롤바 배경을 투명하게 설정 */
+}
+
+::-webkit-scrollbar-thumb {
+    background: transparent;
+}
