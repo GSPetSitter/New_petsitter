@@ -4,6 +4,8 @@ import com.pet.sitter.chat.dto.ChatRoomDTO;
 import com.pet.sitter.chat.repository.ChatRoomRepository;
 import com.pet.sitter.chat.service.ChatRoomService;
 import com.pet.sitter.common.entity.ChatRoom;
+import com.pet.sitter.common.entity.Matching;
+import com.pet.sitter.mypage.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,16 +26,14 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @Autowired
+    private MypageService mypageService;
+
+    @Autowired
     ChatRoomRepository chatRoomRepository;
 
     @Autowired
     public ChatRoomController(ChatRoomService chatRoomService) {
         this.chatRoomService = chatRoomService;
-    }
-
-    @GetMapping("/room")
-    public String rooms(Model model) {
-        return "/chat/room";
     }
 
     @GetMapping("/rooms")
@@ -56,16 +56,22 @@ public class ChatRoomController {
         return new ChatRoomDTO(chatRoomRepository.findChatRoomByRoomUUID(roomUUID));
     }
 
-
     // 채팅방 입장 화면
     @GetMapping("/room/enter/{roomUUID}")
     public String roomDetail(Model model, @PathVariable String roomUUID) {
         ChatRoom chatRoom = chatRoomService.getChatRoomByRoomUUID(roomUUID);
+        Long roomId = chatRoomService.getChatRoomByRoomUUID(roomUUID).getId();
+        Matching matching = chatRoomService.getMatchingByRoomId(roomId);
 
         if (chatRoom != null) {
+            if (matching != null){
+                model.addAttribute("matchChatRoomNo", matching.getChatRoomNo());
+            }
+            model.addAttribute("hostId", chatRoom.getHostId());
+            model.addAttribute("guestId", chatRoom.getGuestId());
             model.addAttribute("roomId", chatRoom.getId());
             model.addAttribute("chatRoom", chatRoom);
-            model.addAttribute("roomUUID", roomUUID);
+            model.addAttribute("roomUUID", chatRoom.getRoomUUID());
             model.addAttribute("roomName", chatRoom.getPetsitter().getPetTitle());
 
             return "/chat/roomdetail";
