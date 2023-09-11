@@ -3,7 +3,6 @@ package com.pet.sitter.chat.controller;
 import com.pet.sitter.chat.dto.ChatMessageDTO;
 import com.pet.sitter.chat.service.ChatMessageService;
 import com.pet.sitter.chat.service.ChatRoomService;
-import com.pet.sitter.common.entity.ChatRoom;
 import com.pet.sitter.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,22 +49,17 @@ public class ChatMessageController {
 
     //매칭 테이블
     @GetMapping("/chat/room/matching")
-    public void matching(Principal principal, @RequestParam Map<String, Object> map) {
+    public void matching(Principal principal, @RequestParam Map<String, Object> map){
         System.out.println("matchingController 접근");
-        System.out.println("roomUUID: " + map.get("roomUUID"));
-        ChatRoom chatRoom = chatRoomService.getChatRoomByRoomUUID((String) map.get("roomUUID"));
-        Long roomId = chatRoom.getId();
-        String hostId = chatRoom.getHostId();
-        String guestId = chatRoom.getGuestId();
-        String roomUUID = chatRoom.getRoomUUID();
-        if (!principal.getName().equals(hostId)) {
+        String roomIdStr = (String)map.get("roomId");
+        Long roomId =Long.parseLong(roomIdStr);
+        String hostId = (String)map.get("hostId");
+        String guestId = (String)map.get("guestId");
+        String roomUUID = (String)map.get("roomUUID");
+        if(!principal.getName().equals(hostId)){
             throw new DataNotFoundException("hostId가 아닙니다.");
         }
         chatMessageService.matching(roomId, hostId, guestId);
     }
 
-    @GetMapping("/chat/room/delmatching")
-    public void delMatching(Principal principal, @RequestParam Map<String, Object> map){
-        chatMessageService.delMatching(chatRoomService.getChatRoomByRoomUUID((String) map.get("roomUUID")).getId());
-    }
 }
